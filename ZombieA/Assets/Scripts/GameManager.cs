@@ -1,7 +1,8 @@
+using TMPro;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,16 +13,28 @@ public class GameManager : MonoBehaviour
     private InputAction left, right, jump;
     private int selectedIndex = 0;
     public TMP_Text timerText;
+    public TMP_Text scoreText;
     private float time = 0;
-    
-    
+    private int score = 0;
+    public GameObject gameOverPanel;
+
+
+    public static GameManager Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         SelectZombie(0);
         left = InputSystem.actions.FindAction("PreviousZombie");
         right = InputSystem.actions.FindAction("NextZombie");
         jump =  InputSystem.actions.FindAction("Jump");
+      
     }
+
 
     void SelectZombie(int index)
     {
@@ -29,7 +42,7 @@ public class GameManager : MonoBehaviour
             selectedZombie.transform.localScale = Vector3.one;
         selectedZombie = zombies[index];
         selectedZombie.transform.localScale = selectedSize;
-        Debug.Log("selected: " + selectedZombie.name);
+        //Debug.Log("selected: " + selectedZombie.name);
     }
 
     // Update is called once per frame
@@ -41,7 +54,7 @@ public class GameManager : MonoBehaviour
             if (selectedIndex < 0)
                 selectedIndex = zombies.Length - 1;
             SelectZombie(selectedIndex);
-            Debug.Log("left pressed");
+            //Debug.Log("left pressed");
         }
         if (right.triggered)
         {
@@ -49,16 +62,42 @@ public class GameManager : MonoBehaviour
             if(selectedIndex >= zombies.Length)
                 selectedIndex = 0;
             SelectZombie(selectedIndex);
-            Debug.Log("right pressed");
+            //Debug.Log("right pressed");
         }
 
         if (jump.triggered)
         {
             Rigidbody rb = selectedZombie.GetComponent<Rigidbody>();
             rb.AddForce(pushForce);
-            Debug.Log("jump");
+            //Debug.Log("jump");
         }
         time += Time.deltaTime;
         timerText.text = "Time: " + time.ToString("F1") + "s";
+
+
     }
+
+    public void AddScore(int amount)
+    {
+        score += amount;
+        scoreText.text = "Score: " + score;
+    }
+
+
+   
+
+    public void GameOver()
+    {
+         Time.timeScale = 0;
+         gameOverPanel.SetActive(true);
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        gameOverPanel.SetActive(false);
+    }
+
+
 }
