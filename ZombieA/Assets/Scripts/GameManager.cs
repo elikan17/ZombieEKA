@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     private float time = 0;
     private int score = 0;
     public GameObject gameOverPanel;
+    public GameObject startGamePanel;
+    public static bool isFirstLoad = true;
 
 
     public static GameManager Instance;
@@ -32,7 +34,18 @@ public class GameManager : MonoBehaviour
         left = InputSystem.actions.FindAction("PreviousZombie");
         right = InputSystem.actions.FindAction("NextZombie");
         jump =  InputSystem.actions.FindAction("Jump");
-      
+
+        if (isFirstLoad)
+        {
+            startGamePanel.SetActive(true);
+            Time.timeScale = 0f;
+            isFirstLoad = false;
+        }
+        else
+        {
+            startGamePanel.SetActive(false);
+            Time.timeScale = 1f;
+        }
     }
 
 
@@ -97,6 +110,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         gameOverPanel.SetActive(false);
+    }
+
+    public void StartGame()
+    {
+               Time.timeScale = 1;
+        startGamePanel.SetActive(false);
     }
 
 
