@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject startGamePanel;
     public static bool isFirstLoad = true;
+    
+    AudioSource audioSource;
 
 
     public static GameManager Instance;
@@ -30,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         SelectZombie(0);
         left = InputSystem.actions.FindAction("PreviousZombie");
         right = InputSystem.actions.FindAction("NextZombie");
@@ -45,7 +48,10 @@ public class GameManager : MonoBehaviour
         {
             startGamePanel.SetActive(false);
             Time.timeScale = 1f;
+            audioSource.Play();
         }
+        
+        
     }
 
 
@@ -103,6 +109,7 @@ public class GameManager : MonoBehaviour
     {
          Time.timeScale = 0;
          gameOverPanel.SetActive(true);
+         audioSource.Stop();
     }
 
     public void RestartGame()
@@ -110,12 +117,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         gameOverPanel.SetActive(false);
+        
     }
 
     public void StartGame()
     {
                Time.timeScale = 1;
         startGamePanel.SetActive(false);
+        audioSource.Play();
     }
 
 
